@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amsterdam WorldPride 2026 Interactive Calendar</title>
+    <title>Amsterdam WorldPride 2026 Calendar</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Text:wght@300;400;500;600&display=swap">
     <style>
         :root {
@@ -211,7 +211,12 @@
         .dot.bought { background: var(--tag-bought-text); }
         .dot.need { background: var(--tag-need-text); }
 
-        .event-list-stack { display: flex; flex-direction: column; gap: 10px; }
+        /* FIXED: Changed gap from 4px to 12px to space out the chips nicely */
+        .event-list-stack { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+        }
 
         .event-mini-card {
             background: var(--glass-bg);
@@ -290,11 +295,11 @@
         </div>
 
         <div class="view-toggle">
-            <div class="toggle-btn active" id="btnGrid" onclick="setView('grid')">Month Grid</div>
-            <div class="toggle-btn" id="btnList" onclick="setView('list')">All Events</div>
+            <div class="toggle-btn" id="btnGrid" onclick="setView('grid')">Month Grid</div>
+            <div class="toggle-btn active" id="btnList" onclick="setView('list')">All Events</div>
         </div>
 
-        <div id="gridViewSection" class="view-section active">
+        <div id="gridViewSection" class="view-section">
             <div class="month-nav">
                 <div class="nav-arrow" onclick="changeMonth(-1)">‹</div>
                 <div class="month-title" id="currentMonthTitle">July 2026</div>
@@ -315,7 +320,7 @@
             </div>
         </div>
 
-        <div id="listViewSection" class="view-section event-list-stack"></div>
+        <div id="listViewSection" class="view-section active event-list-stack"></div>
     </div>
 
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
@@ -332,143 +337,24 @@
 
     <script>
         const eventsData = [
-  {
-    "day": "Saturday",
-    "date": "2026-06-27",
-    "event": "Dyke March",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-07-11",
-    "event": "Queer Market XXL NDSM",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-07-11",
-    "event": "Natalia's party at ours",
-    "time": "Night",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-07-25",
-    "event": "Pride Walk (Pride March)",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-07-25",
-    "event": "Pride Park",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Sunday",
-    "date": "2026-07-26",
-    "event": "Religious Pride Amsterdam at Ouderkerk",
-    "time": "Daytime",
-    "tickets": "Free, no tickets according to website, just show up at 11:00",
-    "tag": ""
-  },
-  {
-    "day": "Monday",
-    "date": "2026-07-27",
-    "event": "Zandvoort Beach Pride Party",
-    "time": "Evening",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Wednesday",
-    "date": "2026-07-29",
-    "event": "Trans Pride March / Trans Walk",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Friday",
-    "date": "2026-07-31",
-    "event": "The Planet x Los Angles at Tillatec",
-    "time": "Night",
-    "tickets": "\u20ac24,50 Early birds sold out, now 1st release (tickets on the planet IG)",
-    "tag": "need ticket"
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-08-01",
-    "event": "Canal Pride / Canal Parade",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-08-01",
-    "event": "Street party Saarein",
-    "time": "Daytime",
-    "tickets": "free, I've reserved two tickets for us with Sophie; Sophie has hers and Noelle's too",
-    "tag": "tickets bought"
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-08-01",
-    "event": "Pamela x Waterkant party",
-    "time": "Daytime / night",
-    "tickets": "free, Yes one for each time slot and the other reserved with Natalia for Runa",
-    "tag": "tickets bought"
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-08-01",
-    "event": "RAUM: Adonis x Spielraum 12-hour",
-    "time": "Night",
-    "tickets": "\u20ac22,50",
-    "tag": "need ticket"
-  },
-  {
-    "day": "Thursday",
-    "date": "2026-08-06",
-    "event": "Wedding Party XXL (Museumplein)",
-    "time": "Evening",
-    "tickets": "\u20ac22,50 Early birds sold out, now regulars",
-    "tag": "need ticket"
-  },
-  {
-    "day": "Saturday",
-    "date": "2026-08-08",
-    "event": "WorldPride March",
-    "time": "Daytime",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "TBD",
-    "event": "Ballroom Pride",
-    "time": "TBD",
-    "tickets": "NA",
-    "tag": ""
-  },
-  {
-    "day": "Saturday",
-    "date": "TBD",
-    "event": "Fetish Pride",
-    "time": "TBD",
-    "tickets": "NA",
-    "tag": ""
-  }
-];
+          {"day": "Saturday", "date": "2026-06-27", "event": "Dyke March", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "2026-07-11", "event": "Queer Market XXL NDSM", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "2026-07-11", "event": "Natalia's party at ours", "time": "Night", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "2026-07-25", "event": "Pride Walk (Pride March)", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "2026-07-25", "event": "Pride Park", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Sunday", "date": "2026-07-26", "event": "Religious Pride Amsterdam at Ouderkerk", "time": "Daytime", "tickets": "Free, no tickets according to website, just show up at 11:00", "tag": ""},
+          {"day": "Monday", "date": "2026-07-27", "event": "Zandvoort Beach Pride Party", "time": "Evening", "tickets": "NA", "tag": ""},
+          {"day": "Wednesday", "date": "2026-07-29", "event": "Trans Pride March / Trans Walk", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Friday", "date": "2026-07-31", "event": "The Planet x Los Angles at Tillatec", "time": "Night", "tickets": "€24,50 Early birds sold out, now 1st release (tickets on the planet IG)", "tag": "need ticket"},
+          {"day": "Saturday", "date": "2026-08-01", "event": "Canal Pride / Canal Parade", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "2026-08-01", "event": "Street party Saarein", "time": "Daytime", "tickets": "free, I've reserved two tickets for us with Sophie; Sophie has hers and Noelle's too", "tag": "tickets bought"},
+          {"day": "Saturday", "date": "2026-08-01", "event": "Pamela x Waterkant party", "time": "Daytime / night", "tickets": "free, Yes one for each time slot and the other reserved with Natalia for Runa", "tag": "tickets bought"},
+          {"day": "Saturday", "date": "2026-08-01", "event": "RAUM: Adonis x Spielraum 12-hour", "time": "Night", "tickets": "€22,50", "tag": "need ticket"},
+          {"day": "Thursday", "date": "2026-08-06", "event": "Wedding Party XXL (Museumplein)", "time": "Evening", "tickets": "€22,50 Early birds sold out, now regulars", "tag": "need ticket"},
+          {"day": "Saturday", "date": "2026-08-08", "event": "WorldPride March", "time": "Daytime", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "TBD", "event": "Ballroom Pride", "time": "TBD", "tickets": "NA", "tag": ""},
+          {"day": "Saturday", "date": "TBD", "event": "Fetish Pride", "time": "TBD", "tickets": "NA", "tag": ""}
+        ];
         let currentYear = 2026;
         let currentMonthIdx = 6; // July
         let searchQuery = "";
@@ -560,14 +446,7 @@
                 const div = document.createElement('div');
                 div.className = 'event-mini-card';
                 div.onclick = function() { openModal(ev); };
-                div.innerHTML = `
-                    <div class="mini-card-info">
-                        <div class="mini-card-title">${ev.event}</div>
-                        <div class="mini-card-meta">${ev.time}</div>
-                        ${getTagHTML(ev.tag)}
-                    </div>
-                    <div style="color:var(--text-tertiary)">›</div>
-                `;
+                div.innerHTML = '<div class="mini-card-info"><div class="mini-card-title">' + ev.event + '</div><div class="mini-card-meta">' + ev.time + '</div>' + getTagHTML(ev.tag) + '</div><div style="color:var(--text-tertiary)">›</div>';
                 container.appendChild(div);
             });
         }
@@ -591,14 +470,7 @@
                 const div = document.createElement('div');
                 div.className = 'event-mini-card';
                 div.onclick = function() { openModal(ev); };
-                div.innerHTML = `
-                    <div class="mini-card-info">
-                        <div class="mini-card-title">${ev.event}</div>
-                        <div class="mini-card-meta">${ev.day}, ${ev.date} • ${ev.time}</div>
-                        ${getTagHTML(ev.tag)}
-                    </div>
-                    <div style="color:var(--text-tertiary)">›</div>
-                `;
+                div.innerHTML = '<div class="mini-card-info"><div class="mini-card-title">' + ev.event + '</div><div class="mini-card-meta">' + ev.day + ', ' + ev.date + ' • ' + ev.time + '</div>' + getTagHTML(ev.tag) + '</div><div style="color:var(--text-tertiary)">›</div>';
                 container.appendChild(div);
             });
         }
@@ -615,6 +487,8 @@
             document.getElementById('modalOverlay').classList.remove('active');
         }
 
+        // Initialize the view with list active to show the padding immediately
+        setView('list');
         renderMonthGrid();
     </script>
 </body>
