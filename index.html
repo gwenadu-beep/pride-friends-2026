@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amsterdam WorldPride 2026 Interactive Calendar</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Text:wght@300;400;500;600&display=swap">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #070a13 0%, #0f1123 40%, #1a0b2e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-active: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.35);
+            --accent-rainbow: linear-gradient(90deg, #ff455b, #ffac33, #00e676, #00b0ff, #af52de);
+            --accent-pink: #ff2d55;
+            --tag-bought-bg: rgba(52, 199, 89, 0.18);
+            --tag-bought-text: #34c759;
+            --tag-need-bg: rgba(255, 149, 0, 0.18);
+            --tag-need-text: #ff9500;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 24px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 430px;
+            background: rgba(10, 10, 15, 0.4);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            padding: 24px 16px;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            position: relative;
+        }
+
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .rainbow-bar {
+            height: 4px;
+            width: 70px;
+            background: var(--accent-rainbow);
+            border-radius: 2px;
+            margin: 0 auto 12px auto;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .search-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.25s;
+        }
+
+        .search-input:focus {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 2px;
+            margin-bottom: 20px;
+            border: 0.5px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-btn.active {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: 0.5px solid var(--glass-border);
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .month-title {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .nav-arrow {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .weekday {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 0.5px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .day-cell.empty { background: transparent; border: none; cursor: default; }
+        .day-cell.has-events { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.18); font-weight: 600; }
+
+        .event-dots {
+            display: flex;
+            gap: 2.5px;
+            position: absolute;
+            bottom: 6px;
+        }
+
+        .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-secondary); }
+        .dot.bought { background: var(--tag-bought-text); }
+        .dot.need { background: var(--tag-need-text); }
+
+        .event-list-stack { display: flex; flex-direction: column; gap: 10px; }
+
+        .event-mini-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .event-mini-card:active {
+            transform: scale(0.98);
+            background: var(--glass-active);
+        }
+
+        .mini-card-info { display: flex; flex-direction: column; gap: 4px; width: 85%; }
+        .mini-card-title { font-size: 14.5px; font-weight: 600; line-height: 1.3; }
+        .mini-card-meta { font-size: 11.5px; color: var(--text-secondary); }
+
+        .event-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            margin-top: 4px;
+            align-self: flex-start;
+        }
+
+        .tag-bought { background: var(--tag-bought-bg); color: var(--tag-bought-text); }
+        .tag-need { background: var(--tag-need-bg); color: var(--tag-need-text); }
+
+        .agenda-container {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .agenda-heading { font-size: 12px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 600; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: center; align-items: flex-end;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-sheet { width: 100%; max-width: 430px; background: rgba(22, 22, 28, 0.92); border-radius: 28px 28px 0 0; border: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 20px 32px 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.15, 1, 0.3, 1); }
+        .modal-overlay.active .modal-sheet { transform: translateY(0); }
+        .modal-handle { width: 36px; height: 5px; background: rgba(255, 255, 255, 0.2); border-radius: 2.5px; margin: 0 auto 20px auto; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+        .modal-date { font-size: 13px; color: var(--accent-pink); font-weight: 600; margin-bottom: 16px; }
+        .modal-box { background: rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 14px; font-size: 13.5px; line-height: 1.45; margin-bottom: 20px; color: rgba(255,255,255,0.9); }
+        .close-btn { background: rgba(255, 255, 255, 0.08); border: none; color: white; width: 100%; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <header>
+            <div class="rainbow-bar"></div>
+            <h1>WorldPride 2026</h1>
+            <div class="subtitle">Amsterdam Interactive Calendar</div>
+        </header>
+
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="calendarSearch" placeholder="Search events, notes, or statuses..." oninput="handleSearch()">
+        </div>
+
+        <div class="view-toggle">
+            <div class="toggle-btn active" id="btnGrid" onclick="setView('grid')">Month Grid</div>
+            <div class="toggle-btn" id="btnList" onclick="setView('list')">All Events</div>
+        </div>
+
+        <div id="gridViewSection" class="view-section active">
+            <div class="month-nav">
+                <div class="nav-arrow" onclick="changeMonth(-1)">‹</div>
+                <div class="month-title" id="currentMonthTitle">July 2026</div>
+                <div class="nav-arrow" onclick="changeMonth(1)">›</div>
+            </div>
+
+            <div class="weekdays">
+                <div class="weekday">S</div><div class="weekday">M</div><div class="weekday">T</div>
+                <div class="weekday">W</div><div class="weekday">T</div><div class="weekday">F</div>
+                <div class="weekday">S</div>
+            </div>
+
+            <div class="days-grid" id="daysGrid"></div>
+
+            <div class="agenda-container" id="agendaSection" style="display:none;">
+                <div class="agenda-heading" id="agendaDateTitle">Events</div>
+                <div id="agendaItems" class="event-list-stack"></div>
+            </div>
+        </div>
+
+        <div id="listViewSection" class="view-section event-list-stack"></div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-handle" onclick="closeModal()"></div>
+            <div id="modalTitle" class="modal-title"></div>
+            <div id="modalDate" class="modal-date"></div>
+            <div id="modalTagSection"></div>
+            <div class="agenda-heading" style="margin-top:16px;">Ticket Info & Log Notes</div>
+            <div id="modalTickets" class="modal-box"></div>
+            <button class="close-btn" onclick="closeModal()">Done</button>
+        </div>
+    </div>
+
+    <script>
+        const eventsData = [
+  {
+    "day": "Saturday",
+    "date": "2026-06-27",
+    "event": "Dyke March",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-07-11",
+    "event": "Queer Market XXL NDSM",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-07-11",
+    "event": "Natalia's party at ours",
+    "time": "Night",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-07-25",
+    "event": "Pride Walk (Pride March)",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-07-25",
+    "event": "Pride Park",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Sunday",
+    "date": "2026-07-26",
+    "event": "Religious Pride Amsterdam at Ouderkerk",
+    "time": "Daytime",
+    "tickets": "Free, no tickets according to website, just show up at 11:00",
+    "tag": ""
+  },
+  {
+    "day": "Monday",
+    "date": "2026-07-27",
+    "event": "Zandvoort Beach Pride Party",
+    "time": "Evening",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Wednesday",
+    "date": "2026-07-29",
+    "event": "Trans Pride March / Trans Walk",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Friday",
+    "date": "2026-07-31",
+    "event": "The Planet x Los Angles at Tillatec",
+    "time": "Night",
+    "tickets": "\u20ac24,50 Early birds sold out, now 1st release (tickets on the planet IG)",
+    "tag": "need ticket"
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-08-01",
+    "event": "Canal Pride / Canal Parade",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-08-01",
+    "event": "Street party Saarein",
+    "time": "Daytime",
+    "tickets": "free, I've reserved two tickets for us with Sophie; Sophie has hers and Noelle's too",
+    "tag": "tickets bought"
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-08-01",
+    "event": "Pamela x Waterkant party",
+    "time": "Daytime / night",
+    "tickets": "free, Yes one for each time slot and the other reserved with Natalia for Runa",
+    "tag": "tickets bought"
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-08-01",
+    "event": "RAUM: Adonis x Spielraum 12-hour",
+    "time": "Night",
+    "tickets": "\u20ac22,50",
+    "tag": "need ticket"
+  },
+  {
+    "day": "Thursday",
+    "date": "2026-08-06",
+    "event": "Wedding Party XXL (Museumplein)",
+    "time": "Evening",
+    "tickets": "\u20ac22,50 Early birds sold out, now regulars",
+    "tag": "need ticket"
+  },
+  {
+    "day": "Saturday",
+    "date": "2026-08-08",
+    "event": "WorldPride March",
+    "time": "Daytime",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "TBD",
+    "event": "Ballroom Pride",
+    "time": "TBD",
+    "tickets": "NA",
+    "tag": ""
+  },
+  {
+    "day": "Saturday",
+    "date": "TBD",
+    "event": "Fetish Pride",
+    "time": "TBD",
+    "tickets": "NA",
+    "tag": ""
+  }
+];
+        let currentYear = 2026;
+        let currentMonthIdx = 6; // July
+        let searchQuery = "";
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        function setView(mode) {
+            document.getElementById('btnGrid').classList.toggle('active', mode === 'grid');
+            document.getElementById('btnList').classList.toggle('active', mode === 'list');
+            document.getElementById('gridViewSection').classList.toggle('active', mode === 'grid');
+            document.getElementById('listViewSection').classList.toggle('active', mode === 'list');
+            if(mode === 'list') renderListView();
+        }
+
+        function changeMonth(direction) {
+            currentMonthIdx += direction;
+            if (currentMonthIdx < 5) currentMonthIdx = 5; 
+            if (currentMonthIdx > 7) currentMonthIdx = 7;
+            renderMonthGrid();
+            document.getElementById('agendaSection').style.display = 'none';
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('calendarSearch').value.toLowerCase();
+            renderMonthGrid();
+            renderListView();
+            if (searchQuery !== "") {
+                setView('list');
+            }
+        }
+
+        function getTagHTML(tag) {
+            if (!tag) return '';
+            if (tag === 'tickets bought') return '<span class="event-tag tag-bought">Tickets Bought</span>';
+            if (tag === 'need ticket') return '<span class="event-tag tag-need">Need Ticket</span>';
+            return '';
+        }
+
+        function renderMonthGrid() {
+            document.getElementById('currentMonthTitle').innerText = monthNames[currentMonthIdx] + ' ' + currentYear;
+            const grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            const firstDayStr = currentYear + '-' + String(currentMonthIdx + 1).padStart(2, '0') + '-01';
+            const startDayOfWeek = new Date(firstDayStr).getDay();
+            const totalDays = new Date(currentYear, currentMonthIdx + 1, 0).getDate();
+
+            for(let i = 0; i < startDayOfWeek; i++) {
+                const spacer = document.createElement('div');
+                spacer.className = 'day-cell empty';
+                grid.appendChild(spacer);
+            }
+
+            for(let day = 1; day <= totalDays; day++) {
+                const dateString = currentYear + '-' + String(currentMonthIdx + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                const dayEvents = eventsData.filter(e => e.date === dateString);
+
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.innerText = day;
+
+                if(dayEvents.length > 0) {
+                    cell.classList.add('has-events');
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'event-dots';
+                    dayEvents.forEach(e => {
+                        const dot = document.createElement('div');
+                        dot.className = 'dot';
+                        if(e.tag === 'tickets bought') dot.classList.add('bought');
+                        if(e.tag === 'need ticket') dot.classList.add('need');
+                        dotsContainer.appendChild(dot);
+                    });
+                    cell.appendChild(dotsContainer);
+                    cell.onclick = function() { showDayAgenda(dateString, day, dayEvents); };
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        function showDayAgenda(dateString, dayNum, dayEvents) {
+            const section = document.getElementById('agendaSection');
+            const title = document.getElementById('agendaDateTitle');
+            const container = document.getElementById('agendaItems');
+            
+            title.innerText = 'Events on ' + monthNames[currentMonthIdx] + ' ' + dayNum;
+            container.innerHTML = '';
+            section.style.display = 'block';
+
+            dayEvents.forEach(ev => {
+                const div = document.createElement('div');
+                div.className = 'event-mini-card';
+                div.onclick = function() { openModal(ev); };
+                div.innerHTML = `
+                    <div class="mini-card-info">
+                        <div class="mini-card-title">${ev.event}</div>
+                        <div class="mini-card-meta">${ev.time}</div>
+                        ${getTagHTML(ev.tag)}
+                    </div>
+                    <div style="color:var(--text-tertiary)">›</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderListView() {
+            const container = document.getElementById('listViewSection');
+            container.innerHTML = '';
+
+            const filtered = eventsData.filter(ev => 
+                ev.event.toLowerCase().includes(searchQuery) || 
+                ev.tag.toLowerCase().includes(searchQuery) ||
+                ev.tickets.toLowerCase().includes(searchQuery)
+            );
+
+            if(filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-tertiary); font-size:14px;">No matching events found</div>';
+                return;
+            }
+
+            filtered.forEach(ev => {
+                const div = document.createElement('div');
+                div.className = 'event-mini-card';
+                div.onclick = function() { openModal(ev); };
+                div.innerHTML = `
+                    <div class="mini-card-info">
+                        <div class="mini-card-title">${ev.event}</div>
+                        <div class="mini-card-meta">${ev.day}, ${ev.date} • ${ev.time}</div>
+                        ${getTagHTML(ev.tag)}
+                    </div>
+                    <div style="color:var(--text-tertiary)">›</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openModal(ev) {
+            document.getElementById('modalTitle').innerText = ev.event;
+            document.getElementById('modalDate').innerText = ev.day + ', ' + ev.date + ' (' + ev.time + ')';
+            document.getElementById('modalTagSection').innerHTML = getTagHTML(ev.tag);
+            document.getElementById('modalTickets').innerText = ev.tickets;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        renderMonthGrid();
+    </script>
+</body>
+</html>
